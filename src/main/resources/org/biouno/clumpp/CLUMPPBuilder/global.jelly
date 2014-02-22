@@ -1,0 +1,32 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	
+	<f:section title="CLUMPP">
+		
+		<f:entry title="${%CLUMPP Location}" description="${%Specify the location of clumpp executable}">
+			<f:repeatable var="inst" items="${descriptor.installations}">
+				<table width="100%">
+
+					<f:entry title="${%Name}">
+						<f:textbox name="CLUMPP.name" value="${inst.name}"
+							checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+					</f:entry>
+					
+					<f:entry title="${%Path to clumpp executable}">
+                        <f:textbox name="CLUMPP.pathToCLUMPP" value="${inst.pathToCLUMPP}"
+                            checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+                    </f:entry>
+
+					<f:entry title="">
+						<div align="right">
+							<f:repeatableDeleteButton />
+						</div>
+					</f:entry>
+
+				</table>
+			</f:repeatable>
+		</f:entry>
+		
+	</f:section>
+	
+</j:jelly>
