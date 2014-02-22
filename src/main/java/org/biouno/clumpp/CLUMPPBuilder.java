@@ -259,7 +259,13 @@ public class CLUMPPBuilder extends Builder {
 		
 		listener.getLogger().println("CLUMPP builder.");
 		
+		// Spit out the mainparams
 		
+		// run CLUMPP
+		
+		// collect results
+		
+		// add action
 		
 		return Boolean.TRUE;
 	}

@@ -2,10 +2,10 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
 	<f:entry title="${%CLUMPP installation}">
-		<select class="setting-input" name="CLUMPP.clumppInstallationName">
+		<select class="setting-input" name="clumppInstallationName">
 			<option>(Default)</option>
 			<j:forEach var="inst" items="${descriptor.installations}">
-				<f:option selected="${inst.name==instance.structureHarvesterInstallationName}">${inst.name}</f:option>
+				<f:option selected="${inst.name==instance.clumppInstallationName}">${inst.name}</f:option>
 			</j:forEach>
 		</select>
 	</f:entry>
@@ -46,9 +46,9 @@
     
     <f:entry name="method" title="Method to be used" field="method">
 	    <select name="method">
-	        <option value="1">FullSearch</option>
-	        <option value="2">Greedy</option>
-	        <option value="3">LargeKGreedy</option>
+	        <option value="1" selected="${instance.method == 1 ? 'true' : null}">FullSearch</option>
+	        <option value="2" selected="${instance.method == 2 ? 'true' : null}">Greedy</option>
+	        <option value="3" selected="${instance.method == 3 ? 'true' : null}">LargeKGreedy</option>
 	    </select>
 	</f:entry>
 	
@@ -58,8 +58,8 @@
     
     <f:entry name="similarityStatistic" title="Pairwise matrix similarity statistic to be used" field="similarityStatistic">
 	    <select name="similarityStatistic">
-	        <option value="1">G</option>
-	        <option value="2">G'</option>
+	        <option value="1" selected="${instance.similarityStatistic == 1 ? 'true' : null}">G</option>
+	        <option value="2" selected="${instance.similarityStatistic == 2 ? 'true' : null}">G'</option>
 	    </select>
 	</f:entry>
     
@@ -67,9 +67,9 @@
     
     <f:entry name="greedyOption" title="Greedy Option" field="greedyOption">
 	    <select name="greedyOption">
-	        <option value="1">All possible input orders</option>
-	        <option value="2">Random input orders</option>
-	        <option value="3">Pre-specified input orders</option>
+	        <option value="1" selected="${instance.greedyOption == 1 ? 'true' : null}">All possible input orders</option>
+	        <option value="2" selected="${instance.greedyOption == 2 ? 'true' : null}">Random input orders</option>
+	        <option value="3" selected="${instance.greedyOption == 3 ? 'true' : null}">Pre-specified input orders</option>
 	    </select>
 	</f:entry>
 	
