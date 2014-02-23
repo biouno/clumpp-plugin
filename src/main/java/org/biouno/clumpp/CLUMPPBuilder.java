@@ -23,15 +23,22 @@
  */
 package org.biouno.clumpp;
 
-import java.io.IOException;
-
+import hudson.AbortException;
+import hudson.EnvVars;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
+import hudson.Util;
 import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
 import hudson.model.Descriptor;
 import hudson.tasks.Builder;
+import hudson.util.ArgumentListBuilder;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -47,7 +54,8 @@ public class CLUMPPBuilder extends Builder {
 	private final String populationDatafile;
 	private final String outfile;
 	private final String miscfile;
-	private final Integer numberOfClusters; // or populations, or K
+	private final String numberOfClusters; // or populations, or K
+	private final Integer numberOfPopulations;
 	private final Integer numberOfIndividuals;
 	private final Integer numberOfRuns;
 	private final Integer method;
@@ -69,11 +77,13 @@ public class CLUMPPBuilder extends Builder {
 	
 	@Extension
 	public static final CLUMPPBuilderDescriptor DESCRIPTOR = new CLUMPPBuilderDescriptor();
+	private static final String POPULATIONS_PARAMFILE_NAME = "paramfile_population";
+	private static final String INDIVIDUALS_PARAMFILE_NAME = "paramfile_individual";
 	
 	@DataBoundConstructor
 	public CLUMPPBuilder(String clumppInstallationName, Boolean individual, String individualDatafile,
 			String populationDatafile, String outfile, String miscfile,
-			Integer numberOfClusters, Integer numberOfIndividuals,
+			String numberOfClusters, Integer numberOfPopulations, Integer numberOfIndividuals,
 			Integer numberOfRuns, Integer method, Integer weight,
 			Integer similarityStatistic, Integer greedyOption, Long repeats,
 			String permutationFile, Integer printPermutedData,
@@ -88,6 +98,7 @@ public class CLUMPPBuilder extends Builder {
 		this.outfile = outfile;
 		this.miscfile = miscfile;
 		this.numberOfClusters = numberOfClusters;
+		this.numberOfPopulations = numberOfPopulations;
 		this.numberOfIndividuals = numberOfIndividuals;
 		this.numberOfRuns = numberOfRuns;
 		this.method = method;
@@ -144,7 +155,7 @@ public class CLUMPPBuilder extends Builder {
 	/**
 	 * @return the numberOfClusters
 	 */
-	public Integer getNumberOfClusters() {
+	public String getNumberOfClusters() {
 		return numberOfClusters;
 	}
 
@@ -153,6 +164,10 @@ public class CLUMPPBuilder extends Builder {
 	 */
 	public Integer getNumberOfIndividuals() {
 		return numberOfIndividuals;
+	}
+	
+	public Integer getNumberOfPopulations() {
+		return numberOfPopulations;
 	}
 
 	/**
@@ -259,17 +274,117 @@ public class CLUMPPBuilder extends Builder {
 		
 		listener.getLogger().println("CLUMPP builder.");
 		
-		// Spit out the mainparams
+		final EnvVars envVars = build.getEnvironment(listener);
+		envVars.overrideAll(build.getBuildVariables());
+		
+		// Get the structure harvester installation used
+		final CLUMPPInstallation clumppInstallation = DESCRIPTOR.getInstallationByName(this.clumppInstallationName);
+		if (clumppInstallation == null) {
+			throw new AbortException("Invalid CLUMPP installation");
+		}
+		
+		final FilePath workspace = build.getWorkspace();
+		final Map<String, String> env = build.getEnvironment(listener);
+		
+		// Spit out the mainparams for populations
+		listener.getLogger().println("Running CLUMPP for populations");
+		String paramfilePopuplationsContent = this.getPopulationsParamfileContent(workspace);
+		paramfilePopuplationsContent = Util.replaceMacro(paramfilePopuplationsContent, env);
+		FilePath paramfilePopulations = new FilePath(workspace, POPULATIONS_PARAMFILE_NAME);
+		listener.getLogger().println("Writing paramfile");
+		paramfilePopulations.write(paramfilePopuplationsContent, "UTF-8");
 		
 		// run CLUMPP
+		ArgumentListBuilder args = new ArgumentListBuilder();
+		args.add(clumppInstallation.getPathToCLUMPP());
+		args.add(paramfilePopulations.getRemote());
+		listener.getLogger().println("Executing CLUMPP. Commands args: " + args.toStringWithQuote());
+		Integer exitCode = launcher.launch().cmds(args).envs(env).stdout(listener).pwd(build.getModuleRoot()).join();
+		
+		if (this.getIndividual()) {
+			// Spit out the mainparams for individuals
+			listener.getLogger().println("Running CLUMPP for individuals");
+			String paramfileIndividualsContent = this.getIndividualsParamfileContent(workspace);
+			paramfileIndividualsContent = Util.replaceMacro(paramfileIndividualsContent, env);
+			FilePath paramfileIndividuals = new FilePath(workspace, INDIVIDUALS_PARAMFILE_NAME);
+			listener.getLogger().println("Writing paramfile");
+			paramfileIndividuals.write(paramfileIndividualsContent, "UTF-8");
+			
+			// run CLUMPP
+			args = new ArgumentListBuilder();
+			args.add(clumppInstallation.getPathToCLUMPP());
+			args.add(paramfileIndividuals.getRemote());
+			listener.getLogger().println("Executing CLUMPP. Commands args: " + args.toStringWithQuote());
+			exitCode = launcher.launch().cmds(args).envs(env).stdout(listener).pwd(build.getModuleRoot()).join();
+		}
 		
 		// collect results
-		
-		// add action
-		
-		return Boolean.TRUE;
+		if (exitCode != 0) {
+			listener.getLogger().println("Error executing CLUMPP. Exit code: " + exitCode);
+			return Boolean.FALSE;
+		} else {
+			
+			return Boolean.TRUE;
+		}
 	}
 	
+	private String getPopulationsParamfileContent(FilePath workspace) {
+		StringBuilder params = new StringBuilder();
+		params.append("DATATYPE 1\n"); // 1 is population, 0 individual
+		params.append("POPFILE " + new FilePath(workspace, this.getPopulationDatafile()).getRemote() + "\n");
+		params.append("OUTFILE " + new FilePath(workspace, this.getOutfile()).getRemote() + ".popq" + "\n");
+		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + new FilePath(workspace, this.getMiscfile()).getRemote() + "\n");
+		params.append("K " + this.getNumberOfClusters() + "\n");
+		params.append("C " + this.getNumberOfPopulations() + "\n");
+		params.append("R " + this.getNumberOfRuns() + "\n");
+		params.append("M " + this.getMethod() + "\n");
+		params.append("W " + this.getWeight() + "\n");
+		params.append("S " + this.getSimilarityStatistic() + "\n");
+		// additional
+		params.append("GREEDY_OPTION " + this.getGreedyOption() + "\n");
+		params.append("REPEATS " + this.getRepeats() + "\n");
+		if (StringUtils.isNotBlank(this.getPermutationFile())) params.append("PERMUTATIONFILE " + new FilePath(workspace, this.getPermutationFile()).getRemote() + "\n");
+		// optional
+		params.append("PRINT_PERMUTED_DATA " + this.getPrintPermutedData() + "\n");
+		if (StringUtils.isNotBlank(this.getPermutedDatafile())) params.append("PERMUTED_DATAFILE " + new FilePath(workspace, this.getPermutedDatafile()).getRemote() + "\n");
+		if (null != this.getPrintEveryPermutationTested()) params.append("PRINT_EVERY_PERM " + this.getPrintEveryPermutationTested() + "\n");
+		params.append("PRINT_RANDOM_INPUTORDER " + this.getPrintRandomInputOrder() + "\n");
+		params.append("RANDOM_INPUTORDERFILE " + new FilePath(workspace, this.getRandomInputOrderFile()).getRemote() + "\n");
+		// advanced
+		params.append("OVERRIDE_WARNINGS " + this.getOverrideWarnings() + "\n");
+		params.append("ORDER_BY_RUN " + this.getOrderByRun() + "\n");
+		return params.toString();
+	}
+	
+	private String getIndividualsParamfileContent(FilePath workspace) {
+		StringBuilder params = new StringBuilder();
+		params.append("DATATYPE 0\n"); // 1 is population, 0 individual
+		params.append("INDFILE " + new FilePath(workspace, this.getIndividualDatafile()).getRemote() + "\n");
+		params.append("OUTFILE " + new FilePath(workspace, this.getOutfile()).getRemote() + ".indivq" + "\n");
+		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + new FilePath(workspace, this.getMiscfile()).getRemote() + "\n");
+		params.append("K " + this.getNumberOfClusters() + "\n");
+		params.append("C " + this.getNumberOfIndividuals() + "\n");
+		params.append("R " + this.getNumberOfRuns() + "\n");
+		params.append("M " + this.getMethod() + "\n");
+		params.append("W " + this.getWeight() + "\n");
+		params.append("S " + this.getSimilarityStatistic() + "\n");
+		// additional
+		params.append("GREEDY_OPTION " + this.getGreedyOption() + "\n");
+		params.append("REPEATS " + this.getRepeats() + "\n");
+		if (StringUtils.isNotBlank(this.getPermutationFile())) params.append("PERMUTATIONFILE " + new FilePath(workspace, this.getPermutationFile()).getRemote() + "\n");
+		// optional
+		params.append("PRINT_PERMUTED_DATA " + this.getPrintPermutedData() + "\n");
+		if (StringUtils.isNotBlank(this.getPermutedDatafile())) params.append("PERMUTED_DATAFILE " + new FilePath(workspace, this.getPermutedDatafile()).getRemote() + "\n");
+		if (null != this.getPrintEveryPermutationTested()) params.append("PRINT_EVERY_PERM " + this.getPrintEveryPermutationTested() + "\n");
+		params.append("PRINT_RANDOM_INPUTORDER " + this.getPrintRandomInputOrder() + "\n");
+		params.append("RANDOM_INPUTORDERFILE " + new FilePath(workspace, this.getRandomInputOrderFile()).getRemote() + "\n");
+		// advanced
+		params.append("OVERRIDE_WARNINGS " + this.getOverrideWarnings() + "\n");
+		params.append("ORDER_BY_RUN " + this.getOrderByRun() + "\n");
+		return params.toString();
+	}
+
+
 	@Override
 	public Descriptor<Builder> getDescriptor() {
 		return (CLUMPPBuilderDescriptor) super.getDescriptor();
