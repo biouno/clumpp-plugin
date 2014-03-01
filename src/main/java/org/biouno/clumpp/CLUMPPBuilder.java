@@ -277,7 +277,7 @@ public class CLUMPPBuilder extends Builder {
 		final EnvVars envVars = build.getEnvironment(listener);
 		envVars.overrideAll(build.getBuildVariables());
 		
-		// Get the structure harvester installation used
+		// Get the CLUMPP installation used
 		final CLUMPPInstallation clumppInstallation = DESCRIPTOR.getInstallationByName(this.clumppInstallationName);
 		if (clumppInstallation == null) {
 			throw new AbortException("Invalid CLUMPP installation");
@@ -298,7 +298,7 @@ public class CLUMPPBuilder extends Builder {
 		ArgumentListBuilder args = new ArgumentListBuilder();
 		args.add(clumppInstallation.getPathToCLUMPP());
 		args.add(paramfilePopulations.getRemote());
-		listener.getLogger().println("Executing CLUMPP. Commands args: " + args.toStringWithQuote());
+		listener.getLogger().println("Executing CLUMPP. Command args: " + args.toStringWithQuote());
 		Integer exitCode = launcher.launch().cmds(args).envs(env).stdout(listener).pwd(build.getModuleRoot()).join();
 		
 		if (this.getIndividual()) {
