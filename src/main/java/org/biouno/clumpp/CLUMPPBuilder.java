@@ -55,25 +55,26 @@ public class CLUMPPBuilder extends Builder {
 	private final String outfile;
 	private final String miscfile;
 	private final String numberOfClusters; // or populations, or K
-	private final Integer numberOfPopulations;
-	private final Integer numberOfIndividuals;
-	private final Integer numberOfRuns;
-	private final Integer method;
-	private final Integer weight;
-	private final Integer similarityStatistic;
+	private final String numberOfPopulations;
+	private final String numberOfIndividuals;
+	private final String numberOfRuns;
+	private final String method;
+	private final String weight;
+	private final String similarityStatistic;
 	// additional options for greedy algorithm
-	private final Integer greedyOption;
-	private final Long repeats;
+	private final String greedyOption;
+	private final String repeats;
 	private final String permutationFile;
 	// optional outputs
-	private final Integer printPermutedData;
+	private final String printPermutedData;
 	private final String permutedDatafile;
-	private final Integer printEveryPermutationTested;
-	private final Integer printRandomInputOrder;
+	private final String printEveryPermutationTested;
+	private final String everyPermutationTestedFile;
+	private final String printRandomInputOrder;
 	private final String randomInputOrderFile;
 	// advanced options
-	private final Integer overrideWarnings;
-	private final Integer orderByRun;
+	private final String overrideWarnings;
+	private final String orderByRun;
 	
 	@Extension
 	public static final CLUMPPBuilderDescriptor DESCRIPTOR = new CLUMPPBuilderDescriptor();
@@ -83,13 +84,13 @@ public class CLUMPPBuilder extends Builder {
 	@DataBoundConstructor
 	public CLUMPPBuilder(String clumppInstallationName, Boolean individual, String individualDatafile,
 			String populationDatafile, String outfile, String miscfile,
-			String numberOfClusters, Integer numberOfPopulations, Integer numberOfIndividuals,
-			Integer numberOfRuns, Integer method, Integer weight,
-			Integer similarityStatistic, Integer greedyOption, Long repeats,
-			String permutationFile, Integer printPermutedData,
-			String permutedDatafile, Integer printEveryPermutationTested,
-			Integer printRandomInputOrder, String randomInputOrderFile,
-			Integer overrideWarnings, Integer orderByRun) {
+			String numberOfClusters, String numberOfPopulations, String numberOfIndividuals,
+			String numberOfRuns, String method, String weight,
+			String similarityStatistic, String greedyOption, String repeats,
+			String permutationFile, String printPermutedData,
+			String permutedDatafile, String printEveryPermutationTested,
+			String everyPermutationTestedFile, String printRandomInputOrder, 
+			String randomInputOrderFile, String overrideWarnings, String orderByRun) {
 		super();
 		this.clumppInstallationName = clumppInstallationName;
 		this.individual = individual;
@@ -110,12 +111,12 @@ public class CLUMPPBuilder extends Builder {
 		this.printPermutedData = printPermutedData;
 		this.permutedDatafile = permutedDatafile;
 		this.printEveryPermutationTested = printEveryPermutationTested;
+		this.everyPermutationTestedFile = everyPermutationTestedFile;
 		this.printRandomInputOrder = printRandomInputOrder;
 		this.randomInputOrderFile = randomInputOrderFile;
 		this.overrideWarnings = overrideWarnings;
 		this.orderByRun = orderByRun;
 	}
-
 
 	/**
 	 * @return the individual
@@ -162,53 +163,53 @@ public class CLUMPPBuilder extends Builder {
 	/**
 	 * @return the numberOfIndividuals
 	 */
-	public Integer getNumberOfIndividuals() {
+	public String getNumberOfIndividuals() {
 		return numberOfIndividuals;
 	}
 	
-	public Integer getNumberOfPopulations() {
+	public String getNumberOfPopulations() {
 		return numberOfPopulations;
 	}
 
 	/**
 	 * @return the numberOfRuns
 	 */
-	public Integer getNumberOfRuns() {
+	public String getNumberOfRuns() {
 		return numberOfRuns;
 	}
 
 	/**
 	 * @return the method
 	 */
-	public Integer getMethod() {
+	public String getMethod() {
 		return method;
 	}
 
 	/**
 	 * @return the weight
 	 */
-	public Integer getWeight() {
+	public String getWeight() {
 		return weight;
 	}
 
 	/**
 	 * @return the similarityStatistic
 	 */
-	public Integer getSimilarityStatistic() {
+	public String getSimilarityStatistic() {
 		return similarityStatistic;
 	}
 
 	/**
 	 * @return the greedyOption
 	 */
-	public Integer getGreedyOption() {
+	public String getGreedyOption() {
 		return greedyOption;
 	}
 
 	/**
 	 * @return the repeats
 	 */
-	public Long getRepeats() {
+	public String getRepeats() {
 		return repeats;
 	}
 
@@ -222,7 +223,7 @@ public class CLUMPPBuilder extends Builder {
 	/**
 	 * @return the printPermutedData
 	 */
-	public Integer getPrintPermutedData() {
+	public String getPrintPermutedData() {
 		return printPermutedData;
 	}
 
@@ -236,14 +237,21 @@ public class CLUMPPBuilder extends Builder {
 	/**
 	 * @return the printEveryPermutationTested
 	 */
-	public Integer getPrintEveryPermutationTested() {
+	public String getPrintEveryPermutationTested() {
 		return printEveryPermutationTested;
+	}
+	
+	/**
+	 * @return the everyPermutationTestedFile
+	 */
+	public String getEveryPermutationTestedFile() {
+		return everyPermutationTestedFile;
 	}
 
 	/**
 	 * @return the printRandomInputOrder
 	 */
-	public Integer getPrintRandomInputOrder() {
+	public String getPrintRandomInputOrder() {
 		return printRandomInputOrder;
 	}
 
@@ -257,14 +265,14 @@ public class CLUMPPBuilder extends Builder {
 	/**
 	 * @return the overrideWarnings
 	 */
-	public Integer getOverrideWarnings() {
+	public String getOverrideWarnings() {
 		return overrideWarnings;
 	}
 
 	/**
 	 * @return the orderByRun
 	 */
-	public Integer getOrderByRun() {
+	public String getOrderByRun() {
 		return orderByRun;
 	}
 	
@@ -329,37 +337,19 @@ public class CLUMPPBuilder extends Builder {
 	}
 	
 	private String getPopulationsParamfileContent(FilePath workspace) {
-		StringBuilder params = new StringBuilder();
-		params.append("DATATYPE 1\n"); // 1 is population, 0 individual
-		params.append("POPFILE " + new FilePath(workspace, this.getPopulationDatafile()).getRemote() + "\n");
-		params.append("OUTFILE " + new FilePath(workspace, this.getOutfile()).getRemote() + ".popq" + "\n");
-		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + new FilePath(workspace, this.getMiscfile()).getRemote() + "\n");
-		params.append("K " + this.getNumberOfClusters() + "\n");
-		params.append("C " + this.getNumberOfPopulations() + "\n");
-		params.append("R " + this.getNumberOfRuns() + "\n");
-		params.append("M " + this.getMethod() + "\n");
-		params.append("W " + this.getWeight() + "\n");
-		params.append("S " + this.getSimilarityStatistic() + "\n");
-		// additional
-		params.append("GREEDY_OPTION " + this.getGreedyOption() + "\n");
-		params.append("REPEATS " + this.getRepeats() + "\n");
-		if (StringUtils.isNotBlank(this.getPermutationFile())) params.append("PERMUTATIONFILE " + new FilePath(workspace, this.getPermutationFile()).getRemote() + "\n");
-		// optional
-		params.append("PRINT_PERMUTED_DATA " + this.getPrintPermutedData() + "\n");
-		if (StringUtils.isNotBlank(this.getPermutedDatafile())) params.append("PERMUTED_DATAFILE " + new FilePath(workspace, this.getPermutedDatafile()).getRemote() + "\n");
-		if (null != this.getPrintEveryPermutationTested()) params.append("PRINT_EVERY_PERM " + this.getPrintEveryPermutationTested() + "\n");
-		params.append("PRINT_RANDOM_INPUTORDER " + this.getPrintRandomInputOrder() + "\n");
-		params.append("RANDOM_INPUTORDERFILE " + new FilePath(workspace, this.getRandomInputOrderFile()).getRemote() + "\n");
-		// advanced
-		params.append("OVERRIDE_WARNINGS " + this.getOverrideWarnings() + "\n");
-		params.append("ORDER_BY_RUN " + this.getOrderByRun() + "\n");
-		return params.toString();
+		String delta = "POPFILE " + new FilePath(workspace, this.getPopulationDatafile()).getRemote() + "\n";
+		return this.getBaseParamFile(workspace, delta);
 	}
 	
 	private String getIndividualsParamfileContent(FilePath workspace) {
+		String delta = "INDFILE " + new FilePath(workspace, this.getIndividualDatafile()).getRemote() + "\n";
+		return this.getBaseParamFile(workspace, delta);
+	}
+
+	public String getBaseParamFile(FilePath workspace, String delta) {
 		StringBuilder params = new StringBuilder();
 		params.append("DATATYPE 0\n"); // 1 is population, 0 individual
-		params.append("INDFILE " + new FilePath(workspace, this.getIndividualDatafile()).getRemote() + "\n");
+		params.append(delta);
 		params.append("OUTFILE " + new FilePath(workspace, this.getOutfile()).getRemote() + ".indivq" + "\n");
 		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + new FilePath(workspace, this.getMiscfile()).getRemote() + "\n");
 		params.append("K " + this.getNumberOfClusters() + "\n");
@@ -376,6 +366,7 @@ public class CLUMPPBuilder extends Builder {
 		params.append("PRINT_PERMUTED_DATA " + this.getPrintPermutedData() + "\n");
 		if (StringUtils.isNotBlank(this.getPermutedDatafile())) params.append("PERMUTED_DATAFILE " + new FilePath(workspace, this.getPermutedDatafile()).getRemote() + "\n");
 		if (null != this.getPrintEveryPermutationTested()) params.append("PRINT_EVERY_PERM " + this.getPrintEveryPermutationTested() + "\n");
+		if (null != this.getEveryPermutationTestedFile()) params.append("PERMUTATIONFILE " + new FilePath(workspace, this.getEveryPermutationTestedFile()).getRemote() + "\n"); 
 		params.append("PRINT_RANDOM_INPUTORDER " + this.getPrintRandomInputOrder() + "\n");
 		params.append("RANDOM_INPUTORDERFILE " + new FilePath(workspace, this.getRandomInputOrderFile()).getRemote() + "\n");
 		// advanced
@@ -383,7 +374,6 @@ public class CLUMPPBuilder extends Builder {
 		params.append("ORDER_BY_RUN " + this.getOrderByRun() + "\n");
 		return params.toString();
 	}
-
 
 	@Override
 	public Descriptor<Builder> getDescriptor() {

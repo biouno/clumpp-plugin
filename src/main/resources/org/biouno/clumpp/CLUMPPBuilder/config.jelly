@@ -99,6 +99,10 @@
         <f:textbox name="printEveryPermutationTested" value="${instance.printEveryPermutationTested}" />
     </f:entry>
     
+    <f:entry title="Every tested permutation file" >
+        <f:textbox name="everyPermutationTestedFile" value="${instance.everyPermutationTestedFile}" />
+    </f:entry>
+    
     <f:entry title="Print random input order" >
         <f:textbox name="printRandomInputOrder" value="${instance.printRandomInputOrder}" />
     </f:entry>
@@ -113,7 +117,7 @@
         <f:textbox name="overrideWarnings" value="${instance.overrideWarnings}" />
     </f:entry>
     
-    <f:entry title="Override warnings" >
+    <f:entry title="Permute the clusters of the output files by the specified run" >
         <f:textbox name="orderByRun" value="${instance.orderByRun}" />
     </f:entry>
     
