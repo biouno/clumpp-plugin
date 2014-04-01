@@ -338,17 +338,17 @@ public class CLUMPPBuilder extends Builder {
 	
 	private String getPopulationsParamfileContent(FilePath workspace) {
 		String delta = "POPFILE " + new FilePath(workspace, this.getPopulationDatafile()).getRemote() + "\n";
-		return this.getBaseParamFile(workspace, delta);
+		return this.getBaseParamFile(workspace, delta, 1);
 	}
 	
 	private String getIndividualsParamfileContent(FilePath workspace) {
 		String delta = "INDFILE " + new FilePath(workspace, this.getIndividualDatafile()).getRemote() + "\n";
-		return this.getBaseParamFile(workspace, delta);
+		return this.getBaseParamFile(workspace, delta, 0);
 	}
 
-	public String getBaseParamFile(FilePath workspace, String delta) {
+	public String getBaseParamFile(FilePath workspace, String delta, Integer dataType) {
 		StringBuilder params = new StringBuilder();
-		params.append("DATATYPE 0\n"); // 1 is population, 0 individual
+		params.append("DATATYPE " + dataType + "\n"); // 1 is population, 0 individual
 		params.append(delta);
 		params.append("OUTFILE " + new FilePath(workspace, this.getOutfile()).getRemote() + ".indivq" + "\n");
 		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + new FilePath(workspace, this.getMiscfile()).getRemote() + "\n");
