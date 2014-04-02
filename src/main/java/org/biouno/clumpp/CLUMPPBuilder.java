@@ -81,6 +81,21 @@ public class CLUMPPBuilder extends Builder {
 	private static final String POPULATIONS_PARAMFILE_NAME = "paramfile_population";
 	private static final String INDIVIDUALS_PARAMFILE_NAME = "paramfile_individual";
 	
+	enum AnalysisType {
+		POPULATIONS(1), 
+		INDIVIDUALS(0);
+		
+		int value;
+		
+		AnalysisType(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+	}
+	
 	@DataBoundConstructor
 	public CLUMPPBuilder(String clumppInstallationName, Boolean individual, String individualDatafile,
 			String populationDatafile, String outfile, String miscfile,
@@ -338,22 +353,28 @@ public class CLUMPPBuilder extends Builder {
 	
 	private String getPopulationsParamfileContent(FilePath workspace) {
 		String delta = "POPFILE " + new FilePath(workspace, this.getPopulationDatafile()).getRemote() + "\n";
-		return this.getBaseParamFile(workspace, delta, 1);
+		return this.getBaseParamFile(workspace, delta, AnalysisType.POPULATIONS);
 	}
 	
 	private String getIndividualsParamfileContent(FilePath workspace) {
 		String delta = "INDFILE " + new FilePath(workspace, this.getIndividualDatafile()).getRemote() + "\n";
-		return this.getBaseParamFile(workspace, delta, 0);
+		return this.getBaseParamFile(workspace, delta, AnalysisType.INDIVIDUALS);
 	}
 
-	public String getBaseParamFile(FilePath workspace, String delta, Integer dataType) {
+	public String getBaseParamFile(FilePath workspace, String delta, AnalysisType analysisType) {
 		StringBuilder params = new StringBuilder();
-		params.append("DATATYPE " + dataType + "\n"); // 1 is population, 0 individual
+		params.append("DATATYPE " + analysisType.getValue() + "\n"); // 1 is population, 0 individual
 		params.append(delta);
 		params.append("OUTFILE " + new FilePath(workspace, this.getOutfile()).getRemote() + ".indivq" + "\n");
 		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + new FilePath(workspace, this.getMiscfile()).getRemote() + "\n");
 		params.append("K " + this.getNumberOfClusters() + "\n");
-		params.append("C " + this.getNumberOfIndividuals() + "\n");
+		if (analysisType == AnalysisType.INDIVIDUALS) {
+			params.append("C " + this.getNumberOfIndividuals() + "\n");
+		} else if (analysisType == AnalysisType.POPULATIONS) {
+			params.append("C " + this.getNumberOfIndividuals() + "\n");
+		} else {
+			throw new RuntimeException("Invalid analysis type: " + analysisType);
+		}
 		params.append("R " + this.getNumberOfRuns() + "\n");
 		params.append("M " + this.getMethod() + "\n");
 		params.append("W " + this.getWeight() + "\n");
