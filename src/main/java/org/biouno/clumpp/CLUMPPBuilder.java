@@ -371,7 +371,7 @@ public class CLUMPPBuilder extends Builder {
 		if (analysisType == AnalysisType.INDIVIDUALS) {
 			params.append("C " + this.getNumberOfIndividuals() + "\n");
 		} else if (analysisType == AnalysisType.POPULATIONS) {
-			params.append("C " + this.getNumberOfIndividuals() + "\n");
+			params.append("C " + this.getNumberOfPopulations() + "\n");
 		} else {
 			throw new RuntimeException("Invalid analysis type: " + analysisType);
 		}
