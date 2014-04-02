@@ -57,7 +57,8 @@ public class CLUMPPBuilder extends Builder {
 	private final String numberOfClusters; // or populations, or K
 	private final String numberOfPopulations;
 	private final String numberOfIndividuals;
-	private final String numberOfRuns;
+	private final String numberOfPopulationsRuns;
+	private final String numberOfIndividualsRuns;
 	private final String method;
 	private final String weight;
 	private final String similarityStatistic;
@@ -100,7 +101,7 @@ public class CLUMPPBuilder extends Builder {
 	public CLUMPPBuilder(String clumppInstallationName, Boolean individual, String individualDatafile,
 			String populationDatafile, String outfile, String miscfile,
 			String numberOfClusters, String numberOfPopulations, String numberOfIndividuals,
-			String numberOfRuns, String method, String weight,
+			String numberOfPopulationsRuns, String numberOfIndividualsRuns, String method, String weight,
 			String similarityStatistic, String greedyOption, String repeats,
 			String permutationFile, String printPermutedData,
 			String permutedDatafile, String printEveryPermutationTested,
@@ -116,7 +117,8 @@ public class CLUMPPBuilder extends Builder {
 		this.numberOfClusters = numberOfClusters;
 		this.numberOfPopulations = numberOfPopulations;
 		this.numberOfIndividuals = numberOfIndividuals;
-		this.numberOfRuns = numberOfRuns;
+		this.numberOfPopulationsRuns = numberOfPopulationsRuns;
+		this.numberOfIndividualsRuns = numberOfIndividualsRuns;
 		this.method = method;
 		this.weight = weight;
 		this.similarityStatistic = similarityStatistic;
@@ -187,10 +189,17 @@ public class CLUMPPBuilder extends Builder {
 	}
 
 	/**
-	 * @return the numberOfRuns
+	 * @return the numberOfPopulationsRuns
 	 */
-	public String getNumberOfRuns() {
-		return numberOfRuns;
+	public String getNumberOfPopulationsRuns() {
+		return numberOfPopulationsRuns;
+	}
+
+	/**
+	 * @return the numberOfIndividualsRuns
+	 */
+	public String getNumberOfIndividualsRuns() {
+		return numberOfIndividualsRuns;
 	}
 
 	/**
@@ -370,12 +379,13 @@ public class CLUMPPBuilder extends Builder {
 		params.append("K " + this.getNumberOfClusters() + "\n");
 		if (analysisType == AnalysisType.INDIVIDUALS) {
 			params.append("C " + this.getNumberOfIndividuals() + "\n");
+			params.append("R " + this.getNumberOfIndividualsRuns() + "\n");
 		} else if (analysisType == AnalysisType.POPULATIONS) {
 			params.append("C " + this.getNumberOfPopulations() + "\n");
+			params.append("R " + this.getNumberOfPopulationsRuns() + "\n");
 		} else {
 			throw new RuntimeException("Invalid analysis type: " + analysisType);
 		}
-		params.append("R " + this.getNumberOfRuns() + "\n");
 		params.append("M " + this.getMethod() + "\n");
 		params.append("W " + this.getWeight() + "\n");
 		params.append("S " + this.getSimilarityStatistic() + "\n");

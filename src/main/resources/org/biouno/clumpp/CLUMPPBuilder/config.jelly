@@ -40,12 +40,16 @@
         <f:textbox name="numberOfPopulations" value="${instance.numberOfPopulations}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
     </f:entry>
     
+    <f:entry title="Number of runs (populations)" >
+        <f:textbox name="numberOfPopulationsRuns" value="${instance.numberOfPopulationsRuns}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+    </f:entry>
+    
     <f:entry title="Number of individuals" >
         <f:textbox name="numberOfIndividuals" value="${instance.numberOfIndividuals}" />
     </f:entry>
     
-    <f:entry title="Number of runs" >
-        <f:textbox name="numberOfRuns" value="${instance.numberOfRuns}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+    <f:entry title="Number of runs (individuals)" >
+        <f:textbox name="numberOfIndividualsRuns" value="${instance.numberOfIndividualsRuns}" />
     </f:entry>
     
     <f:entry name="method" title="Method to be used" field="method">
