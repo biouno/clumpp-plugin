@@ -48,17 +48,20 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class CLUMPPBuilder extends Builder {
 	private final String clumppInstallationName;
-	// main params
+	// populations
+	private final String populationDatafile;
+	private final String numberOfPopulations;
+	private final String numberOfPopulationsRuns;
+	private final String populationsOutfile;
+	// individuals
 	private final Boolean individual;
 	private final String individualDatafile;
-	private final String populationDatafile;
-	private final String outfile;
+	private final String numberOfIndividuals;
+	private final String numberOfIndividualsRuns;
+	private final String individualsOutputFile;
+	// general
 	private final String miscfile;
 	private final String numberOfClusters; // or populations, or K
-	private final String numberOfPopulations;
-	private final String numberOfIndividuals;
-	private final String numberOfPopulationsRuns;
-	private final String numberOfIndividualsRuns;
 	private final String method;
 	private final String weight;
 	private final String similarityStatistic;
@@ -98,27 +101,46 @@ public class CLUMPPBuilder extends Builder {
 	}
 	
 	@DataBoundConstructor
-	public CLUMPPBuilder(String clumppInstallationName, Boolean individual, String individualDatafile,
-			String populationDatafile, String outfile, String miscfile,
-			String numberOfClusters, String numberOfPopulations, String numberOfIndividuals,
-			String numberOfPopulationsRuns, String numberOfIndividualsRuns, String method, String weight,
-			String similarityStatistic, String greedyOption, String repeats,
-			String permutationFile, String printPermutedData,
-			String permutedDatafile, String printEveryPermutationTested,
-			String everyPermutationTestedFile, String printRandomInputOrder, 
-			String randomInputOrderFile, String overrideWarnings, String orderByRun) {
+	public CLUMPPBuilder(
+			String clumppInstallationName, 
+			String populationDatafile, 
+			String numberOfPopulations, 
+			String numberOfPopulationsRuns,
+			String populationsOutfile,
+			Boolean individual, 
+			String individualDatafile,
+			String numberOfIndividuals,
+			String numberOfIndividualsRuns, 
+			String individualsOutputFile,
+			String miscfile,
+			String numberOfClusters, 
+			String method, 
+			String weight,
+			String similarityStatistic, 
+			String greedyOption, 
+			String repeats,
+			String permutationFile, 
+			String printPermutedData,
+			String permutedDatafile, 
+			String printEveryPermutationTested,
+			String everyPermutationTestedFile, 
+			String printRandomInputOrder, 
+			String randomInputOrderFile, 
+			String overrideWarnings, 
+			String orderByRun) {
 		super();
 		this.clumppInstallationName = clumppInstallationName;
+		this.populationDatafile = populationDatafile;
+		this.numberOfPopulations = numberOfPopulations;
+		this.numberOfPopulationsRuns = numberOfPopulationsRuns;
+		this.populationsOutfile = populationsOutfile;
 		this.individual = individual;
 		this.individualDatafile = individualDatafile;
-		this.populationDatafile = populationDatafile;
-		this.outfile = outfile;
+		this.numberOfIndividuals = numberOfIndividuals;
+		this.numberOfIndividualsRuns = numberOfIndividualsRuns;
+		this.individualsOutputFile = individualsOutputFile;
 		this.miscfile = miscfile;
 		this.numberOfClusters = numberOfClusters;
-		this.numberOfPopulations = numberOfPopulations;
-		this.numberOfIndividuals = numberOfIndividuals;
-		this.numberOfPopulationsRuns = numberOfPopulationsRuns;
-		this.numberOfIndividualsRuns = numberOfIndividualsRuns;
 		this.method = method;
 		this.weight = weight;
 		this.similarityStatistic = similarityStatistic;
@@ -157,10 +179,17 @@ public class CLUMPPBuilder extends Builder {
 	}
 
 	/**
-	 * @return the outfile
+	 * @return the populationsOutfile
 	 */
-	public String getOutfile() {
-		return outfile;
+	public String getPopulationsOutfile() {
+		return populationsOutfile;
+	}
+
+	/**
+	 * @return the individualsOutputFile
+	 */
+	public String getIndividualsOutputFile() {
+		return individualsOutputFile;
 	}
 
 	/**
@@ -374,13 +403,14 @@ public class CLUMPPBuilder extends Builder {
 		StringBuilder params = new StringBuilder();
 		params.append("DATATYPE " + analysisType.getValue() + "\n"); // 1 is population, 0 individual
 		params.append(delta);
-		params.append("OUTFILE " + new FilePath(workspace, this.getOutfile()).getRemote() + ".indivq" + "\n");
 		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + new FilePath(workspace, this.getMiscfile()).getRemote() + "\n");
 		params.append("K " + this.getNumberOfClusters() + "\n");
 		if (analysisType == AnalysisType.INDIVIDUALS) {
+			params.append("OUTFILE " + new FilePath(workspace, this.getIndividualsOutputFile()).getRemote() + ".indivq" + "\n");
 			params.append("C " + this.getNumberOfIndividuals() + "\n");
 			params.append("R " + this.getNumberOfIndividualsRuns() + "\n");
 		} else if (analysisType == AnalysisType.POPULATIONS) {
+			params.append("OUTFILE " + new FilePath(workspace, this.getPopulationsOutfile()).getRemote() + ".indivq" + "\n");
 			params.append("C " + this.getNumberOfPopulations() + "\n");
 			params.append("R " + this.getNumberOfPopulationsRuns() + "\n");
 		} else {

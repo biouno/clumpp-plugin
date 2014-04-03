@@ -10,119 +10,131 @@
 		</select>
 	</f:entry>
 	
-	<f:block>CLUMPP main parameters</f:block>
+	<f:section title="Populations Settings">
+	   <f:entry title="Population Data File" >
+           <f:textbox name="populationDatafile" value="${instance.populationDatafile}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+       </f:entry>
+       
+       <f:entry title="Number of populations" >
+            <f:textbox name="numberOfPopulations" value="${instance.numberOfPopulations}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+       </f:entry>
+        
+       <f:entry title="Number of runs (populations)" >
+            <f:textbox name="numberOfPopulationsRuns" value="${instance.numberOfPopulationsRuns}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+       </f:entry>
+       
+       <f:entry title="Output File (populations)" >
+           <f:textbox name="populationsOutfile" value="${instance.populationsOutfile}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+        </f:entry>
+        
+	</f:section>
 	
-	<f:entry title="Read individual data too? (population is already required)" help="">
-        <f:checkbox name="individual" checked="${instance.individual}" default="true" />
-    </f:entry>
-	    
-    <f:entry title="Individual Data File">
-        <f:textbox name="individualDatafile" value="${instance.individualDatafile}" />
-    </f:entry>
-    
-    <f:entry title="Population Data File" >
-        <f:textbox name="populationDatafile" value="${instance.populationDatafile}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
-    </f:entry>
-    
-    <f:entry title="Output File" >
-        <f:textbox name="outfile" value="${instance.outfile}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
-    </f:entry>
-    
-    <f:entry title="Misc File" >
-        <f:textbox name="miscfile" value="${instance.miscfile}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
-    </f:entry>
-    
-    <f:entry title="Number of clusters (K)" >
-        <f:textbox name="numberOfClusters" value="${instance.numberOfClusters}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
-    </f:entry>
-
-	<f:entry title="Number of populations" >
-        <f:textbox name="numberOfPopulations" value="${instance.numberOfPopulations}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
-    </f:entry>
-    
-    <f:entry title="Number of runs (populations)" >
-        <f:textbox name="numberOfPopulationsRuns" value="${instance.numberOfPopulationsRuns}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
-    </f:entry>
-    
-    <f:entry title="Number of individuals" >
-        <f:textbox name="numberOfIndividuals" value="${instance.numberOfIndividuals}" />
-    </f:entry>
-    
-    <f:entry title="Number of runs (individuals)" >
-        <f:textbox name="numberOfIndividualsRuns" value="${instance.numberOfIndividualsRuns}" />
-    </f:entry>
-    
-    <f:entry name="method" title="Method to be used" field="method">
-	    <select name="method">
-	        <option value="1" selected="${instance.method == 1 ? 'true' : null}">FullSearch</option>
-	        <option value="2" selected="${instance.method == 2 ? 'true' : null}">Greedy</option>
-	        <option value="3" selected="${instance.method == 3 ? 'true' : null}">LargeKGreedy</option>
-	    </select>
-	</f:entry>
+	<f:section title="Individuals Settings">
 	
-	<f:entry title="Weight by the number of individuals" >
-        <f:textbox name="weight" value="${instance.weight}" />
-    </f:entry>
+    	<f:entry title="Read individual data too? (population is already required)" help="">
+            <f:checkbox name="individual" checked="${instance.individual}" default="true" />
+        </f:entry>
+    	    
+        <f:entry title="Individual Data File">
+            <f:textbox name="individualDatafile" value="${instance.individualDatafile}" />
+        </f:entry>
+        
+        <f:entry title="Number of individuals" >
+            <f:textbox name="numberOfIndividuals" value="${instance.numberOfIndividuals}" />
+        </f:entry>
+        
+        <f:entry title="Number of runs (individuals)" >
+            <f:textbox name="numberOfIndividualsRuns" value="${instance.numberOfIndividualsRuns}" />
+        </f:entry>
+        
+        <f:entry title="Output File (individuals)" >
+           <f:textbox name="individualsOutputFile" value="${instance.individualsOutputFile}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+        </f:entry>
+        
+    </f:section>
     
-    <f:entry name="similarityStatistic" title="Pairwise matrix similarity statistic to be used" field="similarityStatistic">
-	    <select name="similarityStatistic">
-	        <option value="1" selected="${instance.similarityStatistic == 1 ? 'true' : null}">G</option>
-	        <option value="2" selected="${instance.similarityStatistic == 2 ? 'true' : null}">G'</option>
-	    </select>
-	</f:entry>
+    <f:section title="General CLUMPP Settings">
     
-    <f:block>Additional parameters for Greedy and LargeGreedy algorithms</f:block>
+        <f:entry title="Misc File" >
+            <f:textbox name="miscfile" value="${instance.miscfile}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+        </f:entry>
+        
+        <f:entry title="Number of clusters (K)" >
+            <f:textbox name="numberOfClusters" value="${instance.numberOfClusters}" checkUrl="'${rootURL}/builder/CLUMPPBuilder/required?value='+escape(this.value)" />
+        </f:entry>
     
-    <f:entry name="greedyOption" title="Greedy Option" field="greedyOption">
-	    <select name="greedyOption">
-	        <option value="1" selected="${instance.greedyOption == 1 ? 'true' : null}">All possible input orders</option>
-	        <option value="2" selected="${instance.greedyOption == 2 ? 'true' : null}">Random input orders</option>
-	        <option value="3" selected="${instance.greedyOption == 3 ? 'true' : null}">Pre-specified input orders</option>
-	    </select>
-	</f:entry>
-	
-	<f:entry title="Repeats" >
-        <f:textbox name="repeats" value="${instance.repeats}" />
-    </f:entry>
-    
-    <f:entry title="Permutation file" >
-        <f:textbox name="permutationFile" value="${instance.permutationFile}" />
-    </f:entry>
-    
-    <f:block>Optional outputs</f:block>
-    
-    <f:entry title="Print permuted data" >
-        <f:textbox name="printPermutedData" value="${instance.printPermutedData}" />
-    </f:entry>
-    
-    <f:entry title="Permuted data file" >
-        <f:textbox name="permutedDatafile" value="${instance.permutedDatafile}" />
-    </f:entry>
-    
-    <f:entry title="Print every permutation tested" >
-        <f:textbox name="printEveryPermutationTested" value="${instance.printEveryPermutationTested}" />
-    </f:entry>
-    
-    <f:entry title="Every tested permutation file" >
-        <f:textbox name="everyPermutationTestedFile" value="${instance.everyPermutationTestedFile}" />
-    </f:entry>
-    
-    <f:entry title="Print random input order" >
-        <f:textbox name="printRandomInputOrder" value="${instance.printRandomInputOrder}" />
-    </f:entry>
-    
-    <f:entry title="Random input order file" >
-        <f:textbox name="randomInputOrderFile" value="${instance.randomInputOrderFile}" />
-    </f:entry>
-    
-    <f:block>Advanced options</f:block>
-    
-    <f:entry title="Override warnings" >
-        <f:textbox name="overrideWarnings" value="${instance.overrideWarnings}" />
-    </f:entry>
-    
-    <f:entry title="Permute the clusters of the output files by the specified run" >
-        <f:textbox name="orderByRun" value="${instance.orderByRun}" />
-    </f:entry>
+        <f:entry name="method" title="Method to be used" field="method">
+    	    <select name="method">
+    	        <option value="1" selected="${instance.method == 1 ? 'true' : null}">FullSearch</option>
+    	        <option value="2" selected="${instance.method == 2 ? 'true' : null}">Greedy</option>
+    	        <option value="3" selected="${instance.method == 3 ? 'true' : null}">LargeKGreedy</option>
+    	    </select>
+    	</f:entry>
+    	
+    	<f:entry title="Weight by the number of individuals" >
+            <f:textbox name="weight" value="${instance.weight}" />
+        </f:entry>
+        
+        <f:entry name="similarityStatistic" title="Pairwise matrix similarity statistic to be used" field="similarityStatistic">
+    	    <select name="similarityStatistic">
+    	        <option value="1" selected="${instance.similarityStatistic == 1 ? 'true' : null}">G</option>
+    	        <option value="2" selected="${instance.similarityStatistic == 2 ? 'true' : null}">G'</option>
+    	    </select>
+    	</f:entry>
+        
+        <f:block>Additional parameters for Greedy and LargeGreedy algorithms</f:block>
+        
+        <f:entry name="greedyOption" title="Greedy Option" field="greedyOption">
+    	    <select name="greedyOption">
+    	        <option value="1" selected="${instance.greedyOption == 1 ? 'true' : null}">All possible input orders</option>
+    	        <option value="2" selected="${instance.greedyOption == 2 ? 'true' : null}">Random input orders</option>
+    	        <option value="3" selected="${instance.greedyOption == 3 ? 'true' : null}">Pre-specified input orders</option>
+    	    </select>
+    	</f:entry>
+    	
+    	<f:entry title="Repeats" >
+            <f:textbox name="repeats" value="${instance.repeats}" />
+        </f:entry>
+        
+        <f:entry title="Permutation file" >
+            <f:textbox name="permutationFile" value="${instance.permutationFile}" />
+        </f:entry>
+        
+        <f:block>Optional outputs</f:block>
+        
+        <f:entry title="Print permuted data" >
+            <f:textbox name="printPermutedData" value="${instance.printPermutedData}" />
+        </f:entry>
+        
+        <f:entry title="Permuted data file" >
+            <f:textbox name="permutedDatafile" value="${instance.permutedDatafile}" />
+        </f:entry>
+        
+        <f:entry title="Print every permutation tested" >
+            <f:textbox name="printEveryPermutationTested" value="${instance.printEveryPermutationTested}" />
+        </f:entry>
+        
+        <f:entry title="Every tested permutation file" >
+            <f:textbox name="everyPermutationTestedFile" value="${instance.everyPermutationTestedFile}" />
+        </f:entry>
+        
+        <f:entry title="Print random input order" >
+            <f:textbox name="printRandomInputOrder" value="${instance.printRandomInputOrder}" />
+        </f:entry>
+        
+        <f:entry title="Random input order file" >
+            <f:textbox name="randomInputOrderFile" value="${instance.randomInputOrderFile}" />
+        </f:entry>
+        
+        <f:block>Advanced options</f:block>
+        
+        <f:entry title="Override warnings" >
+            <f:textbox name="overrideWarnings" value="${instance.overrideWarnings}" />
+        </f:entry>
+        
+        <f:entry title="Permute the clusters of the output files by the specified run" >
+            <f:textbox name="orderByRun" value="${instance.orderByRun}" />
+        </f:entry>
+    </f:section>
     
 </j:jelly>
