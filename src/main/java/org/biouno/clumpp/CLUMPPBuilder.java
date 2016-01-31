@@ -390,12 +390,12 @@ public class CLUMPPBuilder extends Builder {
 	}
 	
 	private String getPopulationsParamfileContent(FilePath workspace) {
-		String delta = "POPFILE " + new FilePath(workspace, this.getPopulationDatafile()).getRemote() + "\n";
+		String delta = "POPFILE " + this.getPopulationDatafile() + "\n";
 		return this.getBaseParamFile(delta, AnalysisType.POPULATIONS);
 	}
 	
 	private String getIndividualsParamfileContent(FilePath workspace) {
-		String delta = "INDFILE " + new FilePath(workspace, this.getIndividualDatafile()).getRemote() + "\n";
+		String delta = "INDFILE " + this.getIndividualDatafile() + "\n";
 		return this.getBaseParamFile( delta, AnalysisType.INDIVIDUALS);
 	}
 
