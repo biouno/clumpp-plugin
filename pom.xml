@@ -12,7 +12,7 @@
 	<groupId>org.biouno</groupId>
 	<artifactId>clumpp</artifactId>
 	<name>CLUMPP Plug-in</name>
-	<version>0.9-SNAPSHOT</version>
+	<version>0.8-1</version>
 	<packaging>hpi</packaging>
 	<description>This plug-in integrates Jenkins to CLUMPP.</description>
 
@@ -41,7 +41,7 @@
 		<connection>scm:git:git://github.com/biouno/clumpp-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:biouno/clumpp-plugin.git</developerConnection>
 		<url>http://github.com/biouno/clumpp-plugin</url>
-	  <tag>HEAD</tag>
+	  <tag>clumpp-0.8-1</tag>
   </scm>
 
 	<repositories>
