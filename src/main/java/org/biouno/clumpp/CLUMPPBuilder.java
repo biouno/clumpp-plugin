@@ -23,23 +23,23 @@
  */
 package org.biouno.clumpp;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.tasks.Builder;
 import hudson.util.ArgumentListBuilder;
-
-import java.io.IOException;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * CLUMPP builder.
@@ -391,26 +391,26 @@ public class CLUMPPBuilder extends Builder {
 	
 	private String getPopulationsParamfileContent(FilePath workspace) {
 		String delta = "POPFILE " + new FilePath(workspace, this.getPopulationDatafile()).getRemote() + "\n";
-		return this.getBaseParamFile(workspace, delta, AnalysisType.POPULATIONS);
+		return this.getBaseParamFile(delta, AnalysisType.POPULATIONS);
 	}
 	
 	private String getIndividualsParamfileContent(FilePath workspace) {
 		String delta = "INDFILE " + new FilePath(workspace, this.getIndividualDatafile()).getRemote() + "\n";
-		return this.getBaseParamFile(workspace, delta, AnalysisType.INDIVIDUALS);
+		return this.getBaseParamFile( delta, AnalysisType.INDIVIDUALS);
 	}
 
-	public String getBaseParamFile(FilePath workspace, String delta, AnalysisType analysisType) {
+	public String getBaseParamFile(String delta, AnalysisType analysisType) {
 		StringBuilder params = new StringBuilder();
 		params.append("DATATYPE " + analysisType.getValue() + "\n"); // 1 is population, 0 individual
 		params.append(delta);
-		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + new FilePath(workspace, this.getMiscfile()).getRemote() + "\n");
+		if (StringUtils.isNotBlank(this.getMiscfile())) params.append("MISCFILE " + this.getMiscfile() + "\n");
 		params.append("K " + this.getNumberOfClusters() + "\n");
 		if (analysisType == AnalysisType.INDIVIDUALS) {
-			params.append("OUTFILE " + new FilePath(workspace, this.getIndividualsOutputFile()).getRemote() + ".indivq" + "\n");
+			params.append("OUTFILE " + this.getIndividualsOutputFile() + ".indivq" + "\n");
 			params.append("C " + this.getNumberOfIndividuals() + "\n");
 			params.append("R " + this.getNumberOfIndividualsRuns() + "\n");
 		} else if (analysisType == AnalysisType.POPULATIONS) {
-			params.append("OUTFILE " + new FilePath(workspace, this.getPopulationsOutfile()).getRemote() + ".indivq" + "\n");
+			params.append("OUTFILE " + this.getPopulationsOutfile() + ".indivq" + "\n");
 			params.append("C " + this.getNumberOfPopulations() + "\n");
 			params.append("R " + this.getNumberOfPopulationsRuns() + "\n");
 		} else {
@@ -422,14 +422,14 @@ public class CLUMPPBuilder extends Builder {
 		// additional
 		params.append("GREEDY_OPTION " + this.getGreedyOption() + "\n");
 		params.append("REPEATS " + this.getRepeats() + "\n");
-		if (StringUtils.isNotBlank(this.getPermutationFile())) params.append("PERMUTATIONFILE " + new FilePath(workspace, this.getPermutationFile()).getRemote() + "\n");
+		if (StringUtils.isNotBlank(this.getPermutationFile())) params.append("PERMUTATIONFILE " + this.getPermutationFile() + "\n");
 		// optional
 		params.append("PRINT_PERMUTED_DATA " + this.getPrintPermutedData() + "\n");
-		if (StringUtils.isNotBlank(this.getPermutedDatafile())) params.append("PERMUTED_DATAFILE " + new FilePath(workspace, this.getPermutedDatafile()).getRemote() + "\n");
+		if (StringUtils.isNotBlank(this.getPermutedDatafile())) params.append("PERMUTED_DATAFILE " + this.getPermutedDatafile() + "\n");
 		if (null != this.getPrintEveryPermutationTested()) params.append("PRINT_EVERY_PERM " + this.getPrintEveryPermutationTested() + "\n");
-		if (null != this.getEveryPermutationTestedFile()) params.append("PERMUTATIONFILE " + new FilePath(workspace, this.getEveryPermutationTestedFile()).getRemote() + "\n"); 
+		if (null != this.getEveryPermutationTestedFile()) params.append("PERMUTATIONFILE " + this.getEveryPermutationTestedFile() + "\n"); 
 		params.append("PRINT_RANDOM_INPUTORDER " + this.getPrintRandomInputOrder() + "\n");
-		params.append("RANDOM_INPUTORDERFILE " + new FilePath(workspace, this.getRandomInputOrderFile()).getRemote() + "\n");
+		params.append("RANDOM_INPUTORDERFILE " + this.getRandomInputOrderFile() + "\n");
 		// advanced
 		params.append("OVERRIDE_WARNINGS " + this.getOverrideWarnings() + "\n");
 		params.append("ORDER_BY_RUN " + this.getOrderByRun() + "\n");
